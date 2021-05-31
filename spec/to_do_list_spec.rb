@@ -1,88 +1,122 @@
 require_relative '../models/list_item'
-require_relative '../models/list'
 
 describe ListItem do
-  before(:each) do
-    @content = "to do"
-    @category = "category"
-    @list_item = ListItem.new(@content, @category)
-  end
-
-  it "should return formatted list of item" do
-    expect(@list_item.to_s.class).to eq(String)
-  end
-
-  it "should update the content" do
-    add_content = "to do too"
-    @list_item.set_content(add_content)
-    expect(@list_item.content).to eq(add_content)
-  end
-
-  it "should update the category" do
-    add_category = "category too"
-    @list_item.set_category(add_category)
-    expect(@list_item.category).to eq(add_category)
-  end
+	Default_Category = "general"
+	before(:each) do
+		@content = "cuddle the dog"
+		@list_item = ListItem.new(@content)
+	end
+	describe 'Create/Read' do
+		it 'should be created with content' do
+			expect(@list_item.content).to eq(@content)
+		end
+		it 'should be created with default category' do
+			expect(@list_item.category).to eq(Default_Category)
+		end
+		it 'should be created with default category' do
+			category = "home"
+			list_item = ListItem.new(@content, category)
+			expect(list_item.category).to eq(category)
+		end
+	end
+	describe 'Display' do
+		it 'should return a well-formatted string for display' do
+			expect(@list_item.to_s).to eq(@content)	
+		end
+	end
+	describe 'Edit' do
+		it 'should update content' do
+			updated_content = "take a nap"
+			@list_item.set_content(updated_content)
+			expect(@list_item.content).to eq(updated_content)
+		end
+		it 'should update category' do
+			updated_category = "home"
+			@list_item.set_category(updated_category)
+			expect(@list_item.category).to eq(updated_category)
+		end
+	end
 end
 
+require_relative '../controllers/list'
+
 describe List do
-  before(:each) do
-    @content = "new content"
-    @category = "new category"
-    @list_item = ListItem.new(@content, @category)
-    @list = List.new
-  end
-
-  it "should add list item with content" do
-    @list.add_item(@content)
-    expect(@list.length).to be(1)
-    expect(@list.items[0].content).to eq(@content)
-  end
-
-  it "should add list item with category" do
-    @list.add_item(@content, @category)
-    expect(@list.length).to be(2)
-    expect(@list.items[0].category).to eq(@category)
-  end
-
-  it "should return the array of list items" do
-    content_1 = "to do 1"
-    category_1 = "category 1"
-    content_2 = "to do 2"
-    category_2 = "category 2"
-    @list.add_item(content_1, category_1)
-    @list.add_item(content_2, category_2)
-    expect(@list.class).to eq(Array)
-  end
-
-  it "should return the length of the list" do
-    expect(@list.length).to be(4)
-  end
-
-  it "should delete list item with given item content" do
-    item_to_delete = "to do 1"
-    expect(@list.length).to eq(4)
-    @list.delete_item(item_to_delete)
-    expect(@list.length).to be(3)
-    @list
-  end
-
-  it "should not delete list item if category not matched" do
-    item_to_delete = "to do 2"
-    category_to_delete = "category 1"
-    expect(@list.length).to eq(3)
-    @list.delete_item(item_to_delete, category_to_delete)
-    expect(@list.length).to be(3)
-    @list
-  end
-
-  it "should return array of categories (string)" do
-    expect(@list.categories.class).to eq(Array)
-    expect(@list.categories[0]).to eq(String)
-  end
-
-  it "should return array of list items in the given category" do
-    category = "category 2"
-    expect(@list.category(category).class).to eq(Array)
-  end
+	Default_Category = "general"
+	before(:each) do
+		@list = List.new
+		@content = "cuddle the dog"
+		@category = "general"
+		@list_item = ListItem.new(@content)
+	end
+	describe 'Read items' do
+		before(:each) do
+			@list.add_item(@content, @category)
+		end
+		it 'should return list items for a given category with one match' do
+			expect(@list.category(Default_Category).length).to be(1)
+		end
+		it 'should return list items for a given category with two matches' do
+			content = "take a nap"
+			@list.add_item(content, Default_Category)
+			expect(@list.category(Default_Category).length).to be(2)
+		end
+		it 'should return list items for a given category with multiple categories' do
+			content = "take a nap"
+			category = "home"
+			@list.add_item(content, category)
+			expect(@list.category(Default_Category).length).to be(1)
+		end
+	end
+	describe 'Add item' do
+		it 'should add an item with content' do
+			@list.add_item(@content, @category)
+			expect(@list.length).to be(1)
+			expect(@list.items[0].content).to eq(@content)
+		end
+		it 'should add an item with category' do
+			category = "home"
+			@list.add_item(@content, category)
+			expect(@list.items[0].category).to eq(category)
+		end
+	end
+	describe 'Delete item' do
+		before(:each) do
+			@list.add_item(@content, @category)
+		end
+		it 'should delete a list item' do
+			expect(@list.length).to be(1)
+			@list.delete_item(@list_item)
+			expect(@list.length).to be(0)
+		end
+		it 'should not delete a list item if category does not match' do
+			expect(@list.length).to be(1)
+			category = "home"
+			list_item = ListItem.new(@content, category)
+			@list.delete_item(list_item)
+			expect(@list.length).to be(1)
+		end
+		it 'should not delete a list item if content does not match' do
+			expect(@list.length).to be(1)
+			content = "take a nap"
+			list_item = ListItem.new(content, @category)
+			@list.delete_item(list_item)
+			expect(@list.length).to be(1)
+		end
+	end
+	describe 'Display' do
+		before(:each) do
+			@list.add_item(@content, @category)
+		end
+		it 'should return a list of categories' do
+			categories = [@category]
+			expect(@list.categories).to eq(categories)
+		end
+		it 'should return a list of categories with multiple' do
+			content = "take a nap"
+			category = "home"
+			@list.add_item(content,category)
+			categories = [@category,category]
+			expect(@list.categories).to eq(categories)
+		end
+	end
 end
