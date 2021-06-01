@@ -1,4 +1,4 @@
-require_relative './models/list_item'
+require_relative './list_item'
 
 class List
   def initialize

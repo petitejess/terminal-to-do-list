@@ -1,7 +1,7 @@
 require 'stringio'
 require_relative '../views/list_view'
-require_relative '../list'
 require_relative '../models/list_item'
+require_relative '../models/list'
 
 describe ListView do
 	before(:all) do
