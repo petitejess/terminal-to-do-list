@@ -1,5 +1,5 @@
-require_relative '../list'
 require_relative '../models/list_item'
+require_relative '../models/list'
 
 class ListView
   def initialize(list)
@@ -7,7 +7,7 @@ class ListView
   end
 
   def options
-    puts "Please choose an option (1-5)"
+    puts "\nPlease choose an option (1-5)"
     puts "(1) Show list"
     puts "(2) Show category"
     puts "(3) Add an item"
@@ -39,27 +39,27 @@ class ListView
 
   def get_delete_choice
     puts "Select the entry by number to delete:"
-    @list.items.each do |list_item, index|
-      puts "(#{index}) #{list_item}\n"
+    @list.items.each_with_index do |list_item, index|
+      puts "(#{index + 1}) #{list_item}\n"
     end
     entry = gets.strip.to_i
     @list.delete_item(@list.items[entry - 1])
   end
 
   def show_items
-    puts "To do"
+    puts "\nTo do"
     puts "------"
     puts @list.items
   end
 
   def show_categories
-    puts "Categories"
+    puts "\nCategories"
     puts "----------"
     @list.categories.each {|cat| puts cat}
   end
 
   def show_category(category)
-    puts "List for #{category}"
+    puts "\nList for #{category}"
     puts "---------------"
     puts @list.category(category)
   end

@@ -2,8 +2,8 @@ class ListItem
   attr_reader :category, :content
 
   def initialize(content, category = "general")
-    @category = category
     @content = content
+    @category = (category == "") ? "general" : category
   end
 
   def set_content(updated_content)
