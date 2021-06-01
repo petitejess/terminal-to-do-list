@@ -15,6 +15,6 @@ class ListItem
   end
 
   def to_s
-    "#{@content}"
+    @content
   end
 end
